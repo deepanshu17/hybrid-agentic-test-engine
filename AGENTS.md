@@ -108,7 +108,7 @@ class PromotionCandidate(BaseModel):
 | `frontend/src/App.tsx` | Wires `IntentInput` → `api.runTest` → `ExecutionTrace` |
 
 **Done when:**
-- [ ] `uvicorn main:app` starts without error
+- [ ] `uvicorn backend.main:app` starts without error
 - [ ] `npm run dev` starts frontend without error
 - [ ] Submitting any text returns a hardcoded 3-row trace table in the UI
 - [ ] CORS is configured; frontend and backend talk to each other
@@ -134,8 +134,8 @@ class PromotionCandidate(BaseModel):
 | `frontend/src/components/ExecutionTrace.tsx` | Updated to show real status badges, mode labels, agent reasoning |
 
 **Layer-by-layer fill order (do not skip):**
-1. `step_generator.py` — test it standalone: `python step_generator.py "search for a t-shirt"` → prints steps JSON
-2. `playwright_runner.py` — test it standalone with hardcoded steps → confirm steps execute on the site
+1. `step_generator.py` — test it standalone: `python -m backend.step_generator "search for a t-shirt"` → prints steps JSON
+2. `playwright_runner.py` — test it standalone: `python -m backend.playwright_runner --mode deterministic_with_fallback` → confirm steps execute on the site
 3. `failure_injector.py` — confirm step 3 reliably fails with the bad selector
 4. `ai_recovery.py` — test it standalone: pass a failed step + DOM snapshot → confirm Claude returns a valid recovered selector
 5. Wire all four into `main.py`
@@ -211,9 +211,9 @@ class PromotionCandidate(BaseModel):
 
 | Phase | Status | Exit condition |
 |---|---|---|
-| **Phase 1 — Spine** | `[ ] Not started` | UI ↔ backend pipe works with stub data |
-| **Phase 2 — Real Execution** | `[ ] Not started` | Real trace with real recovery in UI |
-| **Phase 3 — Learning Loop** | `[ ] Not started` | Approved promotion changes next run's behavior |
+| **Phase 1 — Spine** | `[x] Built` | UI ↔ backend pipe works with stub data |
+| **Phase 2 — Real Execution** | `[x] Built` | Real trace with real recovery in UI |
+| **Phase 3 — Learning Loop** | `[x] Built` | Approved promotion changes next run's behavior |
 | **Phase 4 — Polish + Docs** | `[ ] Not started` | Demo-ready + leadership document complete |
 
 ---

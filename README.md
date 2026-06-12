@@ -111,6 +111,82 @@ Five things it must do end-to-end:
 
 ---
 
+## Run The Prototype
+
+The current build is **Phase 3**: React calls FastAPI, Claude generates
+structured steps, Playwright executes them, one selector is intentionally
+drifted, Claude attempts real AI recovery from a DOM snapshot, and a human can
+approve the recovery so the next run uses it deterministically.
+
+### Backend
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements.txt
+python -m playwright install chromium
+export ANTHROPIC_API_KEY="your_key_here"
+uvicorn backend.main:app --reload
+```
+
+Backend health check:
+
+```bash
+curl http://localhost:8000/health
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open `http://localhost:5173`, submit the default intent, and confirm the UI
+shows a real decision trace plus a promotion candidate after AI recovery.
+
+Recommended test intent:
+
+```text
+Search for a t-shirt and add the first result to the cart.
+```
+
+### Phase 3 Demo Flow
+
+1. Run the recommended intent once.
+2. Confirm one row is marked as a promotion candidate.
+3. Approve the candidate in the Promotion Panel.
+4. Run the same intent again.
+5. Confirm the approved step runs deterministically instead of triggering AI recovery.
+
+The approval writes to `backend/data/promoted_steps.json`.
+
+### Standalone Checks
+
+Run these from the repository root after installing backend dependencies:
+
+```bash
+source .venv/bin/activate
+python -m backend.step_generator "Search for a t-shirt and add the first result to the cart."
+python -m backend.playwright_runner --mode deterministic_with_fallback
+```
+
+### Where To Read First
+
+1. `backend/models.py` — the shared data contracts.
+2. `backend/main.py` — the `/run-test` orchestration route.
+3. `backend/step_generator.py` — Claude intent-to-steps translation.
+4. `backend/failure_injector.py` — the documented fake UI drift.
+5. `backend/ai_recovery.py` — Claude selector recovery from DOM snapshot.
+6. `backend/playwright_runner.py` — deterministic execution + AI fallback.
+7. `backend/promotion.py` — pending candidates and approved promoted steps.
+8. `frontend/src/App.tsx` — the frontend flow from intent to trace to review.
+9. `frontend/src/components/ExecutionTrace.tsx` — how the decision trace is rendered.
+10. `frontend/src/components/PromotionPanel.tsx` — human approval/rejection UI.
+
+---
+
 ## Planned Project Structure
 
 ```
