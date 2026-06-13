@@ -111,7 +111,7 @@ Five things it must do end-to-end:
 
 ## Run The Prototype
 
-The current build is **Phase 3**: React calls FastAPI, Claude generates
+The current build is **Phase 4 / demo-ready**: React calls FastAPI, Claude generates
 structured steps, Playwright executes them, one selector is intentionally
 drifted, Claude attempts real AI recovery from a DOM snapshot, and a human can
 approve the recovery so the next run uses it deterministically.
@@ -150,7 +150,7 @@ Recommended test intent:
 Search for a t-shirt and add the first result to the cart.
 ```
 
-### Phase 3 Demo Flow
+### Demo Flow
 
 1. Run the recommended intent once.
 2. Confirm one row is marked as a promotion candidate.
@@ -159,6 +159,19 @@ Search for a t-shirt and add the first result to the cart.
 5. Confirm the approved step runs deterministically instead of triggering AI recovery.
 
 The approval writes to `backend/data/promoted_steps.json`.
+
+To reset the demo and show the learning loop again:
+
+```bash
+rm -f backend/data/promotion_candidates.json backend/data/promoted_steps.json
+```
+
+Refresh the UI and run the same intent again.
+
+### Phase 4 Docs
+
+- `docs/architecture.md` — system diagram, runtime flow, and production gaps.
+- `docs/leadership_document.md` — Component B leadership document with all 6 required sections.
 
 ### Standalone Checks
 
@@ -179,9 +192,11 @@ python -m backend.playwright_runner --mode deterministic_with_fallback
 5. `backend/ai_recovery.py` — Claude selector recovery from DOM snapshot.
 6. `backend/playwright_runner.py` — deterministic execution + AI fallback.
 7. `backend/promotion.py` — pending candidates and approved promoted steps.
-8. `frontend/src/App.tsx` — the frontend flow from intent to trace to review.
-9. `frontend/src/components/ExecutionTrace.tsx` — how the decision trace is rendered.
-10. `frontend/src/components/PromotionPanel.tsx` — human approval/rejection UI.
+8. `docs/architecture.md` — the system map for walkthroughs.
+9. `docs/leadership_document.md` — the EM-level written component.
+10. `frontend/src/App.tsx` — the frontend flow from intent to trace to review.
+11. `frontend/src/components/ExecutionTrace.tsx` — how the decision trace is rendered.
+12. `frontend/src/components/PromotionPanel.tsx` — human approval/rejection UI.
 
 ---
 
@@ -205,6 +220,7 @@ TestSigma/
 │       ├── ExecutionTrace.tsx   # Per-step decision trace table
 │       └── PromotionPanel.tsx   # "Promote to deterministic?" review UI
 ├── docs/
+│   ├── architecture.md         # System diagram and runtime flow
 │   └── leadership_document.md  # Component B — 4–6 page leadership doc
 └── README.md
 ```

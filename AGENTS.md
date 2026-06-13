@@ -214,7 +214,7 @@ class PromotionCandidate(BaseModel):
 | **Phase 1 — Spine** | `[x] Built` | UI ↔ backend pipe works with stub data |
 | **Phase 2 — Real Execution** | `[x] Built` | Real trace with real recovery in UI |
 | **Phase 3 — Learning Loop** | `[x] Built` | Approved promotion changes next run's behavior |
-| **Phase 4 — Polish + Docs** | `[ ] Not started` | Demo-ready + leadership document complete |
+| **Phase 4 — Polish + Docs** | `[x] Built` | Demo-ready + leadership document complete |
 
 ---
 
