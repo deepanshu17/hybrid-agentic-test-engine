@@ -1,20 +1,14 @@
-# Testsigma EM AI Take-Home — Assignment Breakdown
-
-> **Role:** Engineering Manager (AI/Test Automation)
-> **Evaluation split:** 50% Engineer (can you build it?) · 50% Leader (can you think and communicate at a senior level?)
-> **Format:** Submit artifacts → 60-min live walkthrough (you must genuinely understand everything you submit)
-
----
-
 ## The Core Concept: Hybrid Test Execution
 
 The system must support **three execution modes**:
 
-| Mode | What it means |
-|---|---|
-| **Deterministic** | Classic Playwright — click selector, assert result. Fast, cheap. |
+
+| Mode                            | What it means                                                                  |
+| ------------------------------- | ------------------------------------------------------------------------------ |
+| **Deterministic**               | Classic Playwright — click selector, assert result. Fast, cheap.               |
 | **Deterministic + AI Fallback** | Runs deterministically, fails on UI drift → AI agent recovers → learning loop. |
-| **Agentic Primary** | AI agent drives the whole flow from a plain-English intent. |
+| **Agentic Primary**             | AI agent drives the whole flow from a plain-English intent.                    |
+
 
 The **learning loop** is the crown jewel: agent recovers a failed step → human reviews → approves promotion → next run is deterministic again.
 
@@ -61,13 +55,15 @@ Five things it must do end-to-end:
 
 ### Minimal Tech Stack
 
-| Layer | Choice | Notes |
-|---|---|---|
-| **Frontend** | React (or plain HTML) | Text box, Run button, results table |
-| **Backend** | FastAPI (Python) | REST API for test execution |
-| **Execution** | Playwright (Python) | Against any public demo site |
-| **LLM** | Claude API | Step generation + agent recovery |
-| **Fake UI drift** | Hardcoded wrong CSS selector | One step that is designed to fail |
+
+| Layer             | Choice                       | Notes                               |
+| ----------------- | ---------------------------- | ----------------------------------- |
+| **Frontend**      | React (or plain HTML)        | Text box, Run button, results table |
+| **Backend**       | FastAPI (Python)             | REST API for test execution         |
+| **Execution**     | Playwright (Python)          | Against any public demo site        |
+| **LLM**           | Claude API                   | Step generation + agent recovery    |
+| **Fake UI drift** | Hardcoded wrong CSS selector | One step that is designed to fail   |
+
 
 **Target app:** Any public site with a login + simple flow (e.g. `demo.playwright.dev`, `automationexercise.com`)
 
@@ -75,11 +71,13 @@ Five things it must do end-to-end:
 
 ## What Can Be Faked / Stubbed Honestly
 
-| Allowed to stub | Cannot fake |
-|---|---|
-| Target app (any public site) | Actual fallback detection and recovery (must be real) |
+
+| Allowed to stub                               | Cannot fake                                                  |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| Target app (any public site)                  | Actual fallback detection and recovery (must be real)        |
 | Neo4j / knowledge graph (explicitly excluded) | The promotion flow (must update something, even a JSON file) |
-| Polish and elaborate UI | The decision trace (must show per-step mode + reasoning) |
+| Polish and elaborate UI                       | The decision trace (must show per-step mode + reasoning)     |
+
 
 > "A working three-step flow beats an elaborate UI with faked fallback." — assignment brief
 
@@ -210,3 +208,4 @@ TestSigma/
 │   └── leadership_document.md  # Component B — 4–6 page leadership doc
 └── README.md
 ```
+
