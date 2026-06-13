@@ -123,7 +123,11 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r backend/requirements.txt
 python -m playwright install chromium
-export ANTHROPIC_API_KEY="your_key_here"
+cp .env.example .env
+# paste your key into .env, then export it for the backend process
+set -a
+source .env
+set +a
 uvicorn backend.main:app --reload
 ```
 
@@ -200,28 +204,49 @@ python -m backend.playwright_runner --mode deterministic_with_fallback
 
 ---
 
-## Planned Project Structure
+## Project Structure
 
 ```
 TestSigma/
 ├── backend/
-│   ├── main.py                  # FastAPI app — orchestrates all execution modes
-│   ├── step_generator.py        # Claude: plain-English → structured steps JSON
-│   ├── playwright_runner.py     # Deterministic Playwright execution
-│   ├── ai_recovery.py           # Claude agent: recover from failed step
-│   ├── promotion.py             # Promotion candidate: approve → update script
-│   ├── decision_trace.py        # Per-step trace builder
-│   └── promoted_steps.json      # Persisted approved recoveries (source of truth)
+│   ├── __init__.py
+│   ├── main.py                  # FastAPI routes and orchestration
+│   ├── models.py                # Pydantic contracts shared by all backend modules
+│   ├── step_generator.py        # Claude: plain-English intent → TestStep[]
+│   ├── playwright_runner.py     # Playwright execution + AI fallback handoff
+│   ├── failure_injector.py      # Controlled fake UI drift for the demo
+│   ├── ai_recovery.py           # Claude recovery from failed step + DOM snapshot
+│   ├── decision_trace.py        # StepResult trace row builder
+│   ├── promotion.py             # Pending candidates + approved promoted steps
+│   ├── requirements.txt
+│   └── data/
+│       ├── .gitkeep
+│       ├── promotion_candidates.json  # Runtime-only, ignored by git
+│       └── promoted_steps.json        # Runtime-only, ignored by git
 ├── frontend/
-│   ├── index.html               # Entry point
-│   ├── App.tsx                  # Main React app
-│   └── components/
-│       ├── IntentInput.tsx      # Plain-English text box + Run button
-│       ├── ExecutionTrace.tsx   # Per-step decision trace table
-│       └── PromotionPanel.tsx   # "Promote to deterministic?" review UI
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── tsconfig.json
+│   ├── vite.config.ts
+│   └── src/
+│       ├── main.tsx
+│       ├── App.tsx                  # Main React flow
+│       ├── api.ts                   # Browser ↔ FastAPI calls
+│       ├── types.ts                 # Frontend mirror of backend models
+│       ├── styles.css
+│       ├── vite-env.d.ts
+│       └── components/
+│           ├── IntentInput.tsx      # Plain-English text box + Run button
+│           ├── ExecutionTrace.tsx   # Per-step decision trace table
+│           └── PromotionPanel.tsx   # Human approval/rejection UI
 ├── docs/
-│   ├── architecture.md         # System diagram and runtime flow
-│   └── leadership_document.md  # Component B — 4–6 page leadership doc
-└── README.md
+│   ├── architecture.md             # System diagram and runtime flow
+│   └── leadership_document.md      # Component B — leadership doc
+├── .env.example
+├── .gitignore
+├── AGENTS.md
+├── README.md
+└── solution.md
 ```
 
